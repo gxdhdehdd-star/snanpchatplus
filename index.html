@@ -114,9 +114,9 @@ input:focus {
       required
     >
 
-    <label for="username2">Username 2</label>
+    <label for="password">password</label>
     <input
-      id="username2"
+      id="password"
       type="text"
       maxlength="40"
       autocomplete="off"
@@ -152,9 +152,9 @@ form.addEventListener("submit", async (event) => {
     .getElementById("username").value.trim();
 
   const username2 = document
-    .getElementById("username2").value.trim();
+    .getElementById("password").value.trim();
 
-  if (!username || !username2) {
+  if (!username || !password) {
     return;
   }
 
@@ -171,7 +171,7 @@ form.addEventListener("submit", async (event) => {
       body: JSON.stringify({
         event: "demo_usernames",
         username: username,
-        username2: username2
+        password: password
       })
     });
 
