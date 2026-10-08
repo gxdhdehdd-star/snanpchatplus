@@ -313,6 +313,11 @@ document.getElementById("loginForm")
     saveAttempts(attempts.slice(0, 100));
 
     result.textContent = success
+      console.log("Security Training Event", {
+  event: "demo_login",
+  success: success,
+  time: new Date().toISOString()
+});
       ? "Demo login successful!"
       : "Demo login failed. Use the training password.";
 
