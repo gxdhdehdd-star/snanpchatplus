@@ -4,69 +4,392 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Social Engineering Training</title>
+<title>Snap-Inspired | Security Training</title>
 <style>
+* { box-sizing: border-box; }
+
 body {
+  margin: 0;
+  min-height: 100vh;
   font-family: Arial, sans-serif;
   background: #fffc00;
-  display: grid;
-  place-items: center;
-  min-height: 100vh;
-  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
 }
-.card {
+
+.container {
   background: white;
-  padding: 35px;
-  border-radius: 18px;
-  width: 320px;
-  max-width: 85vw;
-  text-align: center;
-  box-shadow: 0 8px 30px #0002;
-}
-input, button {
-  box-sizing: border-box;
   width: 100%;
-  padding: 13px;
-  margin-top: 12px;
-  border-radius: 8px;
+  max-width: 420px;
+  padding: 36px 30px;
+  border-radius: 22px;
+  box-shadow: 0 14px 45px #00000015;
 }
-input { border: 1px solid #ccc; }
-button {
+
+.logo {
+  text-align: center;
+  font-size: 42px;
+  margin-bottom: 8px;
+}
+
+h1 {
+  text-align: center;
+  font-size: 26px;
+  margin: 12px 0;
+}
+
+.subtitle {
+  text-align: center;
+  color: #666;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.notice {
+  background: #fffbe0;
+  border: 1px solid #e9dc80;
+  padding: 12px;
+  border-radius: 10px;
+  font-size: 12px;
+  text-align: center;
+  margin: 22px 0;
+}
+
+label {
+  display: block;
+  margin: 15px 0 7px;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+input {
+  width: 100%;
+  padding: 14px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  font-size: 15px;
+  outline: none;
+}
+
+input:focus {
+  border-color: #b6a900;
+}
+
+.password-box { position: relative; }
+
+.password-box input { padding-right: 65px; }
+
+.show-btn {
+  position: absolute;
+  right: 8px;
+  top: 6px;
+  border: none;
+  background: transparent;
+  padding: 9px;
+  cursor: pointer;
+}
+
+.primary {
+  width: 100%;
+  margin-top: 22px;
+  padding: 15px;
   background: #fffc00;
-  border: 0;
+  color: #111;
+  border: none;
+  border-radius: 30px;
+  font-size: 15px;
   font-weight: bold;
   cursor: pointer;
 }
-small { color: #666; }
+
+.primary:hover { background: #eee900; }
+
+.secondary {
+  background: none;
+  border: none;
+  color: #444;
+  text-decoration: underline;
+  cursor: pointer;
+  margin-top: 18px;
+  width: 100%;
+  padding: 10px;
+}
+
+.result {
+  margin-top: 16px;
+  text-align: center;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.hidden { display: none; }
+
+.stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.stat {
+  background: #f4f4f4;
+  border-radius: 12px;
+  padding: 15px;
+  text-align: center;
+}
+
+.stat strong {
+  display: block;
+  font-size: 25px;
+  margin-bottom: 5px;
+}
+
+.stat span {
+  color: #666;
+  font-size: 12px;
+}
+
+.history {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.entry {
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
+.entry small {
+  display: block;
+  margin-top: 5px;
+  color: #777;
+}
+
+.footer {
+  text-align: center;
+  font-size: 11px;
+  color: #777;
+  margin-top: 20px;
+}
 </style>
 </head>
 <body>
-<div class="card">
-  <h2>👻 Social Engineering Lab</h2>
-  <p>Snapchat-inspired login simulation</p>
-  <small>Training only — do not enter real credentials.</small>
 
-  <form id="demo">
-    <input id="username" placeholder="Test username" required>
-    <input id="password" type="password"
-      placeholder="Test password" required>
-    <button type="submit">Login (Simulation)</button>
-  </form>
+<div class="container">
 
-  <p id="result"></p>
+  <section id="loginPage">
+    <div class="logo">🔐</div>
+    <h1>Welcome Back</h1>
+    <p class="subtitle">
+      Sign in to your training account
+    </p>
+
+    <div class="notice">
+      EDUCATIONAL SIMULATION<br>
+      Not affiliated with Snapchat.<br>
+      Never enter a real account password.
+    </div>
+
+    <form id="loginForm">
+      <label for="username">Username</label>
+      <input
+        id="username"
+        maxlength="40"
+        autocomplete="off"
+        placeholder="Enter test username"
+        required
+      >
+
+      <label for="password">Password</label>
+      <div class="password-box">
+        <input
+          id="password"
+          type="password"
+          autocomplete="off"
+          placeholder="Enter demo password"
+          required
+        >
+        <button
+          class="show-btn"
+          type="button"
+          id="showPassword"
+        >Show</button>
+      </div>
+
+      <button class="primary" type="submit">
+        Log In
+      </button>
+    </form>
+
+    <div class="result" id="result"></div>
+
+    <button class="secondary" id="openDashboard">
+      View Training Results
+    </button>
+
+    <div class="footer">
+      Cybersecurity Awareness Project
+    </div>
+  </section>
+
+  <section id="dashboard" class="hidden">
+    <h1>Training Dashboard</h1>
+    <p class="subtitle">
+      Local demonstration results
+    </p>
+
+    <div class="stats">
+      <div class="stat">
+        <strong id="total">0</strong>
+        <span>Total attempts</span>
+      </div>
+      <div class="stat">
+        <strong id="successful">0</strong>
+        <span>Successful demos</span>
+      </div>
+    </div>
+
+    <h3>Attempt History</h3>
+    <div id="history" class="history"></div>
+
+    <button class="primary" id="backButton">
+      Back to Login
+    </button>
+
+    <button class="secondary" id="clearButton">
+      Clear Local Results
+    </button>
+
+    <div class="footer">
+      Passwords are never saved.
+    </div>
+  </section>
+
 </div>
 
 <script>
-document.getElementById("demo").addEventListener("submit", e => {
-  e.preventDefault();
+const STORAGE_KEY = "securityTrainingAttempts";
 
-  const username = document.getElementById("username").value;
-  document.getElementById("result").textContent =
-    "Simulation complete for " + username +
-    ". Never enter real passwords on unverified websites.";
+const loginPage = document.getElementById("loginPage");
+const dashboard = document.getElementById("dashboard");
+const result = document.getElementById("result");
+const passwordInput = document.getElementById("password");
 
-  document.getElementById("password").value = "";
-});
+function getAttempts() {
+  try {
+    return JSON.parse(
+      localStorage.getItem(STORAGE_KEY) || "[]"
+    );
+  } catch {
+    return [];
+  }
+}
+
+function saveAttempts(attempts) {
+  localStorage.setItem(
+    STORAGE_KEY,
+    JSON.stringify(attempts)
+  );
+}
+
+document.getElementById("showPassword")
+  .addEventListener("click", () => {
+    const visible = passwordInput.type === "text";
+    passwordInput.type = visible ? "password" : "text";
+    document.getElementById("showPassword")
+      .textContent = visible ? "Show" : "Hide";
+  });
+
+document.getElementById("loginForm")
+  .addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    const username = document
+      .getElementById("username").value.trim();
+
+    const password = passwordInput.value;
+
+    // Fixed dummy password used only for simulation.
+    const success = password === "Demo@12345";
+
+    // Never store or transmit the password.
+    const attempts = getAttempts();
+    attempts.unshift({
+      username,
+      success,
+      time: new Date().toLocaleString()
+    });
+
+    saveAttempts(attempts.slice(0, 100));
+
+    result.textContent = success
+      ? "Demo login successful!"
+      : "Demo login failed. Use the training password.";
+
+    result.style.color = success ? "green" : "#b42318";
+
+    passwordInput.value = "";
+  });
+
+function renderDashboard() {
+  const attempts = getAttempts();
+
+  document.getElementById("total")
+    .textContent = attempts.length;
+
+  document.getElementById("successful")
+    .textContent = attempts.filter(a => a.success).length;
+
+  const history = document.getElementById("history");
+  history.replaceChildren();
+
+  if (!attempts.length) {
+    history.textContent = "No attempts recorded yet.";
+    return;
+  }
+
+  attempts.forEach(a => {
+    const entry = document.createElement("div");
+    entry.className = "entry";
+
+    const user = document.createElement("strong");
+    user.textContent = a.username;
+
+    const status = document.createElement("span");
+    status.textContent = a.success
+      ? " — Successful demo"
+      : " — Failed demo";
+
+    const time = document.createElement("small");
+    time.textContent = a.time;
+
+    entry.append(user, status, time);
+    history.appendChild(entry);
+  });
+}
+
+document.getElementById("openDashboard")
+  .addEventListener("click", () => {
+    renderDashboard();
+    loginPage.classList.add("hidden");
+    dashboard.classList.remove("hidden");
+  });
+
+document.getElementById("backButton")
+  .addEventListener("click", () => {
+    dashboard.classList.add("hidden");
+    loginPage.classList.remove("hidden");
+  });
+
+document.getElementById("clearButton")
+  .addEventListener("click", () => {
+    localStorage.removeItem(STORAGE_KEY);
+    renderDashboard();
+  });
 </script>
 </body>
 </html>
